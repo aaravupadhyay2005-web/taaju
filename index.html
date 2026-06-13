@@ -638,7 +638,17 @@ footer{
 .cqval{min-width:28px;text-align:center;font-size:.8rem;font-weight:600;color:var(--ink)}
 .citem-del{color:var(--ink3);font-size:1rem;cursor:pointer;padding:.25rem;transition:color .2s}
 .citem-del:hover{color:#e53e3e}
-.cart-foot{border-top:1px solid var(--border);padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.85rem}
+.cstep-dot{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--cream3);color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:600;flex-shrink:0;
+  transition:background .3s,color .3s;
+}
+.cstep-dot.active{background:var(--g);color:#fff}
+.cstep-dot.done{background:var(--g);color:#fff}
+.cstep-line{flex:1;height:2px;background:var(--cream3);transition:background .3s}
+.cstep-line.done{background:var(--g)}
 .cart-subtotal{display:flex;justify-content:space-between;align-items:center}
 .cart-subtotal-label{font-size:.85rem;color:var(--ink2);font-weight:500}
 .cart-subtotal-val{font-family:var(--serif);font-size:1.5rem;color:var(--g2);font-weight:400}
@@ -775,7 +785,7 @@ footer{
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       <span class="cart-count" id="cart-count">0</span>
     </button>
-    <a href="#order" class="nav-order">Order Now</a>
+    <a href="#products" class="nav-order">Order Now</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -788,7 +798,7 @@ footer{
   <a href="#products" onclick="toggleMenu()">Theplas</a>
   <a href="#coming" onclick="toggleMenu()">Coming Soon</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <a href="#order" onclick="toggleMenu()" style="color:var(--g)">Order Now →</a>
+  <a href="#products" onclick="toggleMenu()" style="color:var(--g)">Order Now →</a>
 </div>
 
 <!-- TICKER -->
@@ -1055,233 +1065,6 @@ footer{
   </div>
 </section>
 
-<!-- ORDER -->
-<section class="order" id="order">
-  <div class="order-left reveal">
-    <p class="eyebrow">Order Fresh</p>
-    <h2 class="h2">Reserve your<br><em>next batch.</em></h2>
-    <p class="body-text">Share your details and preferred pack. We'll confirm availability and delivery on WhatsApp.</p>
-    <div class="order-trust">
-      <div class="otrust-item">Homemade Daily</div>
-      <div class="otrust-item">No Preservatives</div>
-      <div class="otrust-item">Hygienically Packed</div>
-      <div class="otrust-item">FSSAI Registered</div>
-    </div>
-    <div class="order-note">
-      <strong>Delivery details</strong><br/>
-      Min order: Pack of 10. Delivery charges vary by pincode. Most orders delivered next day across Mumbai.
-    </div>
-  </div>
-  <form class="oform reveal" style="transition-delay:.15s"
-    name="taaju-order"
-    method="POST"
-    data-netlify="true"
-    data-netlify-honeypot="bot-field"
-    onsubmit="handleSubmit(event)"
-  >
-    <input type="hidden" name="form-name" value="taaju-order"/>
-    <div style="display:none"><input name="bot-field"/></div>
-
-    <div class="frow">
-      <div class="fgroup">
-        <label class="flabel" for="name">Name *</label>
-        <input class="finput" type="text" id="name" name="name" placeholder="Your full name" required/>
-      </div>
-      <div class="fgroup">
-        <label class="flabel" for="phone">Phone *</label>
-        <input class="finput" type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required/>
-      </div>
-    </div>
-
-    <div class="frow">
-      <div class="fgroup">
-        <label class="flabel" for="email">Email</label>
-        <input class="finput" type="email" id="email" name="email" placeholder="you@email.com"/>
-      </div>
-      <div class="fgroup">
-        <label class="flabel" for="pincode">Pincode *</label>
-        <input class="finput" type="text" id="pincode" name="pincode" placeholder="Mumbai pincode" required/>
-      </div>
-    </div>
-
-    <div class="fgroup">
-      <label class="flabel" for="address">Delivery Address *</label>
-      <textarea class="ftextarea" id="address" name="address" placeholder="Flat no., building name, street, area..." rows="2" required></textarea>
-    </div>
-
-    <div class="frow">
-      <div class="fgroup">
-        <label class="flabel" for="quantity">Order Type *</label>
-        <select class="fselect" id="quantity" name="order_type" required onchange="toggleBulk(this)">
-          <option value="">Select pack</option>
-          <option value="Pack of 10 – ₹149">Pack of 10 – ₹149</option>
-          <option value="Pack of 20 – ₹279">Pack of 20 – ₹279</option>
-          <option value="Pack of 30 – ₹399">Pack of 30 – ₹399</option>
-          <option value="bulk">Bulk Order (Custom)</option>
-        </select>
-      </div>
-      <div class="fgroup">
-        <label class="flabel" for="ddate">Delivery Date</label>
-        <input class="finput" type="date" id="ddate" name="delivery_date"/>
-      </div>
-    </div>
-
-    <!-- BULK ORDER FIELDS — shown only when Bulk is selected -->
-    <div id="bulk-fields" style="display:none;background:rgba(47,93,80,.05);border:1.5px solid rgba(47,93,80,.15);border-radius:var(--r);padding:1.1rem;display:none;flex-direction:column;gap:.9rem">
-      <p style="font-size:.78rem;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.08em">Bulk Order Details</p>
-      <div class="frow">
-        <div class="fgroup">
-          <label class="flabel" for="bulk-qty">Number of Theplas *</label>
-          <input class="finput" type="number" id="bulk-qty" name="bulk_quantity" placeholder="e.g. 50, 100, 200" min="31"/>
-        </div>
-        <div class="fgroup">
-          <label class="flabel" for="bulk-occasion">Occasion</label>
-          <select class="fselect" id="bulk-occasion" name="bulk_occasion">
-            <option value="">Select occasion</option>
-            <option value="Travel / Trip">Travel / Trip</option>
-            <option value="Office / Corporate">Office / Corporate</option>
-            <option value="Family Function">Family Function</option>
-            <option value="Pooja / Religious Event">Pooja / Religious Event</option>
-            <option value="Wedding / Celebration">Wedding / Celebration</option>
-            <option value="Festive Gifting">Festive Gifting</option>
-            <option value="Regular Home Stock">Regular Home Stock</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-      <div class="fgroup">
-        <label class="flabel" for="bulk-date">Required By Date *</label>
-        <input class="finput" type="date" id="bulk-date" name="bulk_required_by"/>
-      </div>
-      <div class="fgroup">
-        <label class="flabel" for="bulk-notes">Special Requirements</label>
-        <textarea class="ftextarea" id="bulk-notes" name="bulk_special_requirements" placeholder="Any specific flavour, packaging, or delivery instructions for the bulk order..." rows="2"></textarea>
-      </div>
-      <div style="background:rgba(201,149,74,.1);border:1px solid rgba(201,149,74,.3);border-radius:8px;padding:.75rem 1rem;font-size:.78rem;color:var(--ink2);line-height:1.6">
-        💬 For bulk orders we'll call you back within a few hours to confirm pricing, packaging, and delivery details.
-      </div>
-    </div>
-
-    <div class="fgroup">
-      <label class="flabel" for="instructions">Special Instructions</label>
-      <textarea class="ftextarea" id="instructions" name="special_instructions" placeholder="Dietary preferences, spice level, delivery notes..." rows="2"></textarea>
-    </div>
-
-    <div class="fgroup">
-      <label class="flabel">How did you hear about us?</label>
-      <select class="fselect" name="source">
-        <option value="">Select (optional)</option>
-        <option value="Instagram">Instagram</option>
-        <option value="WhatsApp">WhatsApp</option>
-        <option value="Friend / Family">Friend / Family</option>
-        <option value="Google">Google</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-
-    <button type="submit" class="btn-submit" id="submit-btn">Submit Order Request →</button>
-    <p class="fnote">We accept limited daily batches to keep every order fresh.<br/>You'll get a WhatsApp confirmation within a few minutes.</p>
-  </form>
-
-  <!-- SUCCESS MESSAGE -->
-  <!-- PAYMENT PAGE -->
-  <div id="form-success" style="display:none;flex-direction:column;gap:0;width:100%">
-
-    <!-- Step indicator -->
-    <div style="display:flex;align-items:center;gap:0;margin-bottom:2rem">
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">✓</div>
-        <span style="font-size:.8rem;font-weight:600;color:var(--g)">Order Details</span>
-      </div>
-      <div style="flex:1;height:2px;background:var(--g);margin:0 .75rem"></div>
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">2</div>
-        <span style="font-size:.8rem;font-weight:600;color:var(--g)">Payment</span>
-      </div>
-      <div style="flex:1;height:2px;background:var(--cream3);margin:0 .75rem"></div>
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--cream3);color:var(--ink2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">3</div>
-        <span style="font-size:.8rem;font-weight:500;color:var(--ink2)">Confirm</span>
-      </div>
-    </div>
-
-    <!-- Order summary card -->
-    <div style="background:rgba(47,93,80,.05);border:1.5px solid rgba(47,93,80,.15);border-radius:var(--r2);padding:1.25rem 1.5rem;margin-bottom:1.5rem">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-        <span style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--g)">Your Order</span>
-        <span style="font-size:.72rem;color:var(--ink3)" id="order-id-display"></span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:.95rem;font-weight:500;color:var(--ink)" id="payment-pack-display">—</span>
-        <span style="font-family:var(--serif);font-size:1.5rem;color:var(--g);font-weight:400" id="payment-amount-display">—</span>
-      </div>
-      <div style="font-size:.78rem;color:var(--ink2);margin-top:.35rem" id="payment-name-display"></div>
-    </div>
-
-    <!-- UPI Payment card -->
-    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.75rem;margin-bottom:1.25rem;text-align:center">
-      <p style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ink2);margin-bottom:1.25rem">Pay via UPI</p>
-
-      <!-- UPI QR Code (generated via QR API) -->
-      <div style="width:180px;height:180px;margin:0 auto 1.25rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);padding:8px;background:#fff">
-        <img id="upi-qr" src="" alt="UPI QR Code" style="width:100%;height:100%;object-fit:contain"/>
-      </div>
-
-      <div style="font-size:.82rem;color:var(--ink2);margin-bottom:1rem">Scan with any UPI app</div>
-
-      <!-- App icons row -->
-      <div style="display:flex;justify-content:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
-        <a id="gpay-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
-          <div style="width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" style="width:32px;height:32px;object-fit:contain" alt="GPay"/>
-          </div>
-          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">GPay</span>
-        </a>
-        <a id="phonepe-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
-          <div style="width:48px;height:48px;border-radius:12px;background:#5f259f;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" style="width:32px;height:32px;object-fit:contain" alt="PhonePe"/>
-          </div>
-          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">PhonePe</span>
-        </a>
-        <a id="paytm-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
-          <div style="width:48px;height:48px;border-radius:12px;background:#00baf2;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/512px-Paytm_logo.png" style="width:32px;height:32px;object-fit:contain" alt="Paytm"/>
-          </div>
-          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">Paytm</span>
-        </a>
-        <a id="bhim-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
-          <div style="width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/BHIM_logo.png/512px-BHIM_logo.png" style="width:32px;height:32px;object-fit:contain" alt="BHIM"/>
-          </div>
-          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">BHIM</span>
-        </a>
-      </div>
-
-      <!-- UPI ID copy -->
-      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem">
-        <div>
-          <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600;margin-bottom:.15rem">UPI ID</div>
-          <div style="font-size:.95rem;font-weight:600;color:var(--ink);font-family:monospace">9324841972@upi</div>
-        </div>
-        <button onclick="copyUPI()" style="background:var(--g);color:#fff;border:none;border-radius:100px;padding:.4rem .9rem;font-size:.75rem;font-weight:600;cursor:pointer;font-family:var(--sans);white-space:nowrap" id="copy-upi-btn">Copy</button>
-      </div>
-
-      <p style="font-size:.75rem;color:var(--ink3);line-height:1.6">Pay the exact amount shown above. Screenshot not required — just send us your UTR/transaction ID on WhatsApp.</p>
-    </div>
-
-    <!-- After payment CTA -->
-    <div style="background:var(--g2);border-radius:var(--r2);padding:1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.85rem">
-      <p style="color:rgba(255,255,255,.9);font-size:.9rem;line-height:1.6;font-weight:300">After paying, send your <strong style="color:#fff">transaction ID / UTR number</strong> on WhatsApp to confirm your order.</p>
-      <a id="wa-confirm-link" href="#" target="_blank" style="background:#25D366;color:#fff;padding:.85rem 1.75rem;border-radius:100px;font-size:.9rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:background .2s">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        Send Payment Confirmation
-      </a>
-      <p style="color:rgba(255,255,255,.4);font-size:.72rem">Your order is reserved for 30 minutes pending payment.</p>
-    </div>
-
-  </div>
-</section>
-
 <!-- COMING SOON -->
 <section class="coming" id="coming">
   <div class="reveal">
@@ -1394,27 +1177,190 @@ footer{
 <!-- CART DRAWER -->
 <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
 <div class="cart-drawer" id="cart-drawer">
+
+  <!-- STEP HEADER -->
   <div class="cart-head">
-    <span class="cart-title">Your Cart</span>
+    <div id="cart-back-btn" onclick="goCartStep(currentStep-1)" style="display:none;cursor:pointer;color:var(--ink2);font-size:.85rem;display:none;align-items:center;gap:.3rem">
+      <span style="font-size:1.1rem">←</span> Back
+    </div>
+    <span class="cart-title" id="cart-step-title">Your Cart</span>
     <button class="cart-close" onclick="closeCart()">✕</button>
   </div>
-  <div class="cart-items" id="cart-items">
-    <div class="cart-empty" id="cart-empty">
-      <div class="cart-empty-icon">🛒</div>
-      <p>Your cart is empty.<br>Add some fresh theplas!</p>
+
+  <!-- STEP INDICATOR -->
+  <div id="cart-steps-indicator" style="display:flex;align-items:center;padding:.75rem 1.5rem;border-bottom:1px solid var(--border);gap:0">
+    <div class="cstep-dot active" id="sdot-1">1</div>
+    <div class="cstep-line" id="sline-1"></div>
+    <div class="cstep-dot" id="sdot-2">2</div>
+    <div class="cstep-line" id="sline-2"></div>
+    <div class="cstep-dot" id="sdot-3">3</div>
+  </div>
+
+  <!-- ── STEP 1: CART ── -->
+  <div id="cart-step-1" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <p>Your cart is empty.<br>Add some fresh theplas!</p>
+      </div>
+    </div>
+    <div class="cart-foot" id="cart-foot" style="display:none">
+      <div class="cart-subtotal">
+        <span class="cart-subtotal-label">Total</span>
+        <span class="cart-subtotal-val" id="cart-total">₹0</span>
+      </div>
+      <button class="btn-checkout" onclick="goCartStep(2)">
+        Proceed to Details →
+      </button>
+      <p class="cart-foot-note">Free delivery above ₹399. Next-day delivery across Mumbai.</p>
     </div>
   </div>
-  <div class="cart-foot" id="cart-foot" style="display:none">
-    <div class="cart-subtotal">
-      <span class="cart-subtotal-label">Total</span>
-      <span class="cart-subtotal-val" id="cart-total">₹0</span>
+
+  <!-- ── STEP 2: DETAILS FORM ── -->
+  <div id="cart-step-2" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div style="flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.9rem">
+      <div style="font-size:.72rem;color:var(--ink3);margin-bottom:-.25rem">Your order will be confirmed on WhatsApp after payment.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="fgroup">
+          <label class="flabel" for="c-name">Name *</label>
+          <input class="finput" type="text" id="c-name" placeholder="Full name" required/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel" for="c-phone">Phone *</label>
+          <input class="finput" type="tel" id="c-phone" placeholder="+91 XXXXX XXXXX" required/>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="fgroup">
+          <label class="flabel" for="c-email">Email</label>
+          <input class="finput" type="email" id="c-email" placeholder="you@email.com"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel" for="c-pincode">Pincode *</label>
+          <input class="finput" type="text" id="c-pincode" placeholder="400001" required/>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel" for="c-address">Delivery Address *</label>
+        <textarea class="ftextarea" id="c-address" placeholder="Flat, building, street, area..." rows="2" required></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="fgroup">
+          <label class="flabel" for="c-date">Delivery Date</label>
+          <input class="finput" type="date" id="c-date"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel" for="c-source">How did you hear?</label>
+          <select class="fselect" id="c-source">
+            <option value="">Optional</option>
+            <option>Instagram</option>
+            <option>WhatsApp</option>
+            <option>Friend / Family</option>
+            <option>Google</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel" for="c-notes">Special Instructions</label>
+        <textarea class="ftextarea" id="c-notes" placeholder="Spice level, delivery notes..." rows="2"></textarea>
+      </div>
+
+      <!-- Cart summary -->
+      <div style="background:rgba(47,93,80,.05);border:1px solid rgba(47,93,80,.12);border-radius:var(--r);padding:.9rem 1rem">
+        <div style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--g);margin-bottom:.5rem">Order Summary</div>
+        <div id="details-summary" style="font-size:.82rem;color:var(--ink2);line-height:1.8"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:.5rem;padding-top:.5rem;border-top:1px solid rgba(47,93,80,.12)">
+          <span style="font-size:.82rem;font-weight:600;color:var(--ink)">Total</span>
+          <span style="font-size:.95rem;font-weight:700;color:var(--g)" id="details-total">₹0</span>
+        </div>
+      </div>
     </div>
-    <button class="btn-checkout" onclick="checkoutWhatsApp()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      Order via WhatsApp
-    </button>
-    <p class="cart-foot-note">We'll confirm your order and delivery slot on WhatsApp within a few minutes.</p>
+
+    <div style="padding:1.25rem 1.5rem;border-top:1px solid var(--border)">
+      <button class="btn-checkout" onclick="submitDetails()">Continue to Payment →</button>
+    </div>
   </div>
+
+  <!-- ── STEP 3: PAYMENT ── -->
+  <div id="cart-step-3" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+    <div style="flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1rem">
+
+      <!-- Order summary pill -->
+      <div style="background:rgba(47,93,80,.05);border:1.5px solid rgba(47,93,80,.15);border-radius:var(--r);padding:.9rem 1rem;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--g);font-weight:600">Pay Amount</div>
+          <div style="font-family:var(--serif);font-size:1.75rem;color:var(--g2);font-weight:400;line-height:1" id="pay-amount-display">₹0</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.68rem;color:var(--ink3)">Order ID</div>
+          <div style="font-size:.82rem;font-weight:600;color:var(--ink);font-family:monospace" id="pay-order-id"></div>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div style="text-align:center">
+        <div style="width:160px;height:160px;margin:0 auto .75rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);padding:6px;background:#fff">
+          <img id="pay-qr" src="" alt="UPI QR" style="width:100%;height:100%;object-fit:contain"/>
+        </div>
+        <div style="font-size:.75rem;color:var(--ink3)">Scan with any UPI app</div>
+      </div>
+
+      <!-- App buttons -->
+      <div style="display:flex;justify-content:center;gap:.75rem">
+        <a id="p-gpay" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" style="width:28px;height:28px;object-fit:contain" alt="GPay"/>
+          </div>
+          <span style="font-size:.62rem;color:var(--ink2);font-weight:500">GPay</span>
+        </a>
+        <a id="p-phonepe" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:44px;height:44px;border-radius:10px;background:#5f259f;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" style="width:28px;height:28px;object-fit:contain" alt="PhonePe"/>
+          </div>
+          <span style="font-size:.62rem;color:var(--ink2);font-weight:500">PhonePe</span>
+        </a>
+        <a id="p-paytm" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:44px;height:44px;border-radius:10px;background:#00baf2;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/512px-Paytm_logo.png" style="width:28px;height:28px;object-fit:contain" alt="Paytm"/>
+          </div>
+          <span style="font-size:.62rem;color:var(--ink2);font-weight:500">Paytm</span>
+        </a>
+        <a id="p-bhim" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/BHIM_logo.png/512px-BHIM_logo.png" style="width:28px;height:28px;object-fit:contain" alt="BHIM"/>
+          </div>
+          <span style="font-size:.62rem;color:var(--ink2);font-weight:500">BHIM</span>
+        </a>
+      </div>
+
+      <!-- UPI ID copy -->
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem">
+        <div>
+          <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600;margin-bottom:.1rem">UPI ID</div>
+          <div style="font-size:.9rem;font-weight:600;color:var(--ink);font-family:monospace">9324841972@upi</div>
+        </div>
+        <button onclick="copyUPI()" id="copy-upi-btn" style="background:var(--g);color:#fff;border:none;border-radius:100px;padding:.35rem .85rem;font-size:.75rem;font-weight:600;cursor:pointer;font-family:var(--sans)">Copy</button>
+      </div>
+
+      <!-- After pay WhatsApp -->
+      <div style="background:var(--g2);border-radius:var(--r2);padding:1.25rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.75rem">
+        <p style="color:rgba(255,255,255,.85);font-size:.82rem;line-height:1.6;font-weight:300">After paying, send your <strong style="color:#fff">UTR / Transaction ID</strong> on WhatsApp to confirm.</p>
+        <a id="p-wa-confirm" href="#" target="_blank" style="background:#25D366;color:#fff;padding:.75rem 1.4rem;border-radius:100px;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Confirm on WhatsApp
+        </a>
+        <p style="color:rgba(255,255,255,.35);font-size:.68rem">Order reserved for 30 minutes pending payment.</p>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <!-- FAB -->
@@ -1427,7 +1373,7 @@ footer{
   <button onclick="openCart()" style="flex:0 0 auto;width:48px;padding:0;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--cream2);color:var(--g);border:none;cursor:pointer;position:relative">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   </button>
-  <a href="#order" class="btn-green" style="flex:1;justify-content:center;padding:.8rem">Order Now</a>
+  <a href="#products" class="btn-green" style="flex:1;justify-content:center;padding:.8rem">Order Now</a>
   <a href="https://wa.me/919324841972?text=Hi%20TAAJU%2C%20I%27d%20like%20to%20order." class="btn-wa" target="_blank" style="flex:1;justify-content:center;padding:.8rem">WhatsApp</a>
 </div>
 
@@ -1437,40 +1383,68 @@ footer{
 <script>
 // ── CART STATE ──────────────────────────────
 let cart = [];
+let currentStep = 1;
 
 function getTotal(){ return cart.reduce((s,i) => s + i.price * i.qty, 0); }
 function getCount(){ return cart.reduce((s,i) => s + i.qty, 0); }
 
+// ── STEP NAVIGATION ──────────────────────────
+function goCartStep(step){
+  if(step < 1 || step > 3) return;
+  currentStep = step;
+  [1,2,3].forEach(n => {
+    const el = document.getElementById('cart-step-'+n);
+    if(el) el.style.display = 'none';
+  });
+  const cur = document.getElementById('cart-step-'+step);
+  if(cur) cur.style.display = 'flex';
+  [1,2,3].forEach(n => {
+    const dot  = document.getElementById('sdot-'+n);
+    const line = document.getElementById('sline-'+n);
+    if(dot){
+      dot.classList.toggle('active', n === step);
+      dot.classList.toggle('done',   n < step);
+      dot.textContent = n < step ? '✓' : String(n);
+    }
+    if(line) line.classList.toggle('done', n < step);
+  });
+  const titles = {1:'Your Cart', 2:'Your Details', 3:'Pay & Confirm'};
+  document.getElementById('cart-step-title').textContent = titles[step];
+  const back = document.getElementById('cart-back-btn');
+  if(back) back.style.display = step > 1 ? 'flex' : 'none';
+  if(step === 2){
+    const t = getTotal();
+    document.getElementById('details-summary').innerHTML = cart.map(i =>
+      `<div style="display:flex;justify-content:space-between"><span>${i.qty}× ${i.name}</span><span>₹${(i.price*i.qty).toLocaleString('en-IN')}</span></div>`
+    ).join('');
+    document.getElementById('details-total').textContent = '₹'+t.toLocaleString('en-IN');
+    const di = document.getElementById('c-date');
+    if(di && !di.value){ const t2=new Date(); t2.setDate(t2.getDate()+1); di.min=t2.toISOString().split('T')[0]; di.value=di.min; }
+  }
+}
+
+// ── RENDER CART ──────────────────────────────
 function renderCart(){
   const itemsEl = document.getElementById('cart-items');
   const footEl  = document.getElementById('cart-foot');
   const totalEl = document.getElementById('cart-total');
   const cc      = document.getElementById('cart-count');
-
-  // Badge
   const count = getCount();
   cc.textContent = count;
   count > 0 ? cc.classList.add('show') : cc.classList.remove('show');
-
   if(cart.length === 0){
-    itemsEl.innerHTML = `
-      <div class="cart-empty">
-        <div class="cart-empty-icon">🛒</div>
-        <p>Your cart is empty.<br>Add some fresh theplas!</p>
-      </div>`;
+    itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Your cart is empty.<br>Add some fresh theplas!</p></div>`;
     footEl.style.display = 'none';
     return;
   }
-
   footEl.style.display = 'flex';
   totalEl.textContent = '₹' + getTotal().toLocaleString('en-IN');
-
   itemsEl.innerHTML = cart.map((item,idx) => `
     <div class="citem">
       <div class="citem-img"><img src="${item.img}" alt="${item.name}"/></div>
       <div class="citem-info">
         <div class="citem-name">${item.name}</div>
-        <div class="citem-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+        <div class="citem-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
         <div class="citem-qty">
           <button class="cqbtn" onclick="cartQty(${idx},-1)">−</button>
           <span class="cqval">${item.qty}</span>
@@ -1486,12 +1460,12 @@ function cartQty(idx, delta){
   renderCart();
 }
 function removeItem(idx){
-  cart.splice(idx, 1);
+  cart.splice(idx,1);
   renderCart();
-  if(cart.length === 0) closeCart();
+  if(cart.length === 0){ currentStep=1; }
 }
 
-// ── QTY CONTROLS ON PRODUCT CARDS ───────────
+// ── QTY ON PRODUCT CARDS ─────────────────────
 function changeQty(btn, delta){
   const row = btn.closest('.qty-row');
   const v   = row.querySelector('.qval');
@@ -1507,13 +1481,10 @@ function addToCart(name, price, btn, img){
   const existing = cart.find(i => i.name === name);
   if(existing) existing.qty += qty;
   else cart.push({name, price, qty, img});
-
-  // Button feedback
   const orig = btn.innerHTML;
   btn.innerHTML = '✓ Added!';
   btn.classList.add('added');
   setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('added'); }, 1500);
-
   showToast('🛒 ' + qty + '× ' + name + ' added');
   openCart();
 }
@@ -1521,6 +1492,7 @@ function addToCart(name, price, btn, img){
 // ── CART OPEN / CLOSE ────────────────────────
 function openCart(){
   renderCart();
+  goCartStep(currentStep);
   document.getElementById('cart-overlay').classList.add('open');
   document.getElementById('cart-drawer').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1532,13 +1504,57 @@ function closeCart(){
 }
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeCart(); });
 
-// ── CHECKOUT ────────────────────────────────
-function checkoutWhatsApp(){
-  if(cart.length===0) return;
-  let msg = 'Hi TAAJU! I\'d like to place an order 🛒\n\n';
-  cart.forEach(i=>{ msg += `• ${i.qty}× ${i.name} — ₹${(i.price*i.qty).toLocaleString('en-IN')}\n` });
-  msg += `\n*Total: ₹${getTotal().toLocaleString('en-IN')}*\n\nPlease confirm delivery details.`;
-  window.open('https://wa.me/919324841972?text='+encodeURIComponent(msg),'_blank');
+// ── STEP 2: SUBMIT DETAILS ───────────────────
+async function submitDetails(){
+  const name  = document.getElementById('c-name').value.trim();
+  const phone = document.getElementById('c-phone').value.trim();
+  const pin   = document.getElementById('c-pincode').value.trim();
+  const addr  = document.getElementById('c-address').value.trim();
+  if(!name || !phone || !pin || !addr){ showToast('⚠️ Please fill all required fields'); return; }
+  const btn = document.querySelector('#cart-step-2 .btn-checkout');
+  btn.textContent = 'Processing…';
+  btn.disabled = true;
+  const orderId = 'TJ-' + Date.now().toString().slice(-6);
+  const total   = getTotal();
+  const upiLink = `upi://pay?pa=9324841972@upi&pn=TAAJU&tn=${encodeURIComponent('TAAJU Order '+orderId)}&am=${total}`;
+  try {
+    const cartSummary = cart.map(i => `${i.qty}× ${i.name} = ₹${i.price*i.qty}`).join(', ');
+    await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        access_key: '4ac34449-48a6-47cb-8079-f6675e34c580',
+        subject: `🛒 New TAAJU Order — ${name} — ₹${total}`,
+        from_name: 'TAAJU Website',
+        order_id: orderId, name, phone,
+        email: document.getElementById('c-email').value || 'Not provided',
+        pincode: pin, address: addr,
+        cart: cartSummary, total: '₹'+total,
+        delivery_date: document.getElementById('c-date').value || 'Not specified',
+        notes: document.getElementById('c-notes').value || 'None',
+        source: document.getElementById('c-source').value || 'Not specified',
+      })
+    });
+  } catch(e){}
+  document.getElementById('pay-amount-display').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('pay-order-id').textContent = orderId;
+  document.getElementById('pay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiLink)}`;
+  ['p-gpay','p-phonepe','p-paytm','p-bhim'].forEach(id => { const el=document.getElementById(id); if(el) el.href=upiLink; });
+  const cartLines = cart.map(i => `• ${i.qty}× ${i.name} — ₹${i.price*i.qty}`).join('\n');
+  const waMsg = `Hi TAAJU! I've paid for my order 💚\n\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}\nPincode: ${pin}\n\n${cartLines}\n\n*Total: ₹${total}*\n\nTransaction ID / UTR: [paste here]`;
+  document.getElementById('p-wa-confirm').href = 'https://wa.me/919324841972?text='+encodeURIComponent(waMsg);
+  btn.textContent = 'Continue to Payment →';
+  btn.disabled = false;
+  goCartStep(3);
+}
+
+// ── COPY UPI ────────────────────────────────
+function copyUPI(){
+  navigator.clipboard.writeText('9324841972@upi').then(() => {
+    const btn = document.getElementById('copy-upi-btn');
+    btn.textContent = 'Copied!'; btn.style.background = 'var(--g2)';
+    setTimeout(() => { btn.textContent='Copy'; btn.style.background=''; }, 2000);
+  });
 }
 
 // ── TOAST ───────────────────────────────────
@@ -1561,178 +1577,6 @@ function toggleFaq(btn){
   if(!open){btn.setAttribute('aria-expanded','true');ans.classList.add('open')}
 }
 
-// ── COPY UPI ────────────────────────────────
-function copyUPI(){
-  navigator.clipboard.writeText('9324841972@upi').then(()=>{
-    const btn = document.getElementById('copy-upi-btn');
-    btn.textContent = 'Copied!';
-    btn.style.background = 'var(--g2)';
-    setTimeout(()=>{btn.textContent='Copy';btn.style.background=''},2000);
-  });
-}
-
-// ── BULK TOGGLE ─────────────────────────────
-function toggleBulk(sel){
-  const bf = document.getElementById('bulk-fields');
-  const bq = document.getElementById('bulk-qty');
-  const bd = document.getElementById('bulk-date');
-  if(sel.value === 'bulk'){
-    bf.style.display = 'flex';
-    bq.required = true;
-    bd.required = true;
-  } else {
-    bf.style.display = 'none';
-    bq.required = false;
-    bd.required = false;
-  }
-}
-
-// ── FORM SUBMIT (Netlify Forms) ──────────────
-async function handleSubmit(e){
-  e.preventDefault();
-  const form = e.target;
-  const btn  = document.getElementById('submit-btn');
-
-  // Basic validation
-  const name  = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const pin   = document.getElementById('pincode').value.trim();
-  const addr  = document.getElementById('address').value.trim();
-  const qty   = document.getElementById('quantity').value;
-  if(!name||!phone||!pin||!addr||!qty){
-    showToast('⚠️ Please fill all required fields');return;
-  }
-  if(qty==='bulk'){
-    const bq = document.getElementById('bulk-qty').value;
-    if(!bq){showToast('⚠️ Please enter number of theplas for bulk order');return;}
-  }
-
-  // Submit to Netlify
-  btn.textContent = 'Submitting…';
-  btn.disabled = true;
-
-  try {
-    const pack = document.getElementById('quantity').selectedOptions[0].text;
-    const ddate = document.getElementById('ddate').value;
-    const instructions = document.getElementById('instructions').value;
-    const source = form.querySelector('[name="source"]').value;
-
-    let bulkInfo = '';
-    if(qty === 'bulk'){
-      const bqty = document.getElementById('bulk-qty').value;
-      const bocc = document.getElementById('bulk-occasion').value;
-      const bdate = document.getElementById('bulk-date').value;
-      const bnotes = document.getElementById('bulk-notes').value;
-      bulkInfo = `\n\n🧾 BULK ORDER DETAILS\nQuantity: ${bqty} theplas\nOccasion: ${bocc||'Not specified'}\nRequired By: ${bdate||'Not specified'}\nSpecial Requirements: ${bnotes||'None'}`;
-    }
-
-    // Build email body
-    const emailBody = `New TAAJU Order Request\n\n👤 CUSTOMER DETAILS\nName: ${name}\nPhone: ${phone}\nEmail: ${document.getElementById('email').value||'Not provided'}\nPincode: ${pin}\nAddress: ${addr}\n\n📦 ORDER DETAILS\nPack: ${pack}\nDelivery Date: ${ddate||'Not specified'}\nSpecial Instructions: ${instructions||'None'}\nSource: ${source||'Not specified'}${bulkInfo}`;
-
-    // Submit to Web3Forms
-    const payload = {
-      access_key: '4ac34449-48a6-47cb-8079-f6675e34c580',
-      subject: `🛒 New TAAJU Order — ${name} — ${pack}`,
-      from_name: 'TAAJU Website',
-      name, phone,
-      email: document.getElementById('email').value || 'Not provided',
-      pincode: pin,
-      address: addr,
-      order_type: pack,
-      delivery_date: ddate || 'Not specified',
-      special_instructions: instructions || 'None',
-      source: source || 'Not specified',
-      bulk_quantity: qty==='bulk' ? document.getElementById('bulk-qty').value : 'N/A',
-      bulk_occasion: qty==='bulk' ? document.getElementById('bulk-occasion').value : 'N/A',
-      bulk_required_by: qty==='bulk' ? document.getElementById('bulk-date').value : 'N/A',
-      bulk_notes: qty==='bulk' ? document.getElementById('bulk-notes').value : 'N/A',
-    };
-
-    const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-
-    if(res.ok){
-      // Price map
-      const priceMap = {'Pack of 10 – ₹149':149,'Pack of 20 – ₹279':279,'Pack of 30 – ₹399':399};
-      const amount = qty==='bulk' ? null : priceMap[pack];
-      const orderId = 'TJ-'+Date.now().toString().slice(-6);
-      const upiId   = '9324841972@upi';
-
-      // Build UPI deep link
-      const upiNote = `TAAJU Order ${orderId}`;
-      const upiBase = `upi://pay?pa=${upiId}&pn=TAAJU&tn=${encodeURIComponent(upiNote)}${amount?'&am='+amount:''}`;
-
-      // Set QR code (using Google Charts QR API via wikimedia proxy)
-      const qrData = encodeURIComponent(upiBase);
-      document.getElementById('upi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiBase)}`;
-
-      // Set UPI app deep links
-      document.getElementById('gpay-link').href    = upiBase;
-      document.getElementById('phonepe-link').href = upiBase;
-      document.getElementById('paytm-link').href   = upiBase;
-      document.getElementById('bhim-link').href    = upiBase;
-
-      // Populate order summary
-      document.getElementById('payment-pack-display').textContent   = pack;
-      document.getElementById('payment-amount-display').textContent = amount ? '₹'+amount : 'Custom';
-      document.getElementById('payment-name-display').textContent   = `For ${name} · ${phone}`;
-      document.getElementById('order-id-display').textContent       = orderId;
-
-      // WhatsApp confirmation link
-      let waMsg = `Hi TAAJU! I've paid for my order 💚\n\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}\nPack: ${pack}${amount?'\nAmount: ₹'+amount:''}\n\nTransaction ID / UTR: [paste here]`;
-      document.getElementById('wa-confirm-link').href = 'https://wa.me/919324841972?text='+encodeURIComponent(waMsg);
-
-      // Show payment page
-      form.style.display = 'none';
-      document.getElementById('form-success').style.display = 'flex';
-      document.getElementById('form-success').scrollIntoView({behavior:'smooth',block:'start'});
-
-    } else {
-      throw new Error('Submission failed');
-    }
-  } catch(err){
-    showToast('⚠️ Something went wrong. Please WhatsApp us directly.');
-    btn.textContent = 'Submit Order Request →';
-    btn.disabled = false;
-  }
-}
-
-// ── DELIVERY DATE ────────────────────────────
-function updateFLabel(input){
-  document.getElementById('flabeltext') &&
-    (document.getElementById('flabeltext').textContent = input.files?.[0]?.name || 'Upload payment screenshot');
-}
-
-// ── DELIVERY DATE ───────────────────────────
-['ddate','bulk-date'].forEach(id=>{
-  const di=document.getElementById(id);
-  if(di){const t=new Date();t.setDate(t.getDate()+1);const s=t.toISOString().split('T')[0];di.min=s;if(id==='ddate')di.value=s;}
-});
-
-// ── NAV SCROLL ──────────────────────────────
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
-},{ passive:true });
-
-// ── SCROLL REVEAL ───────────────────────────
-const ro = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}});
-},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
-
-// ── MOBILE MENU ─────────────────────────────
-function toggleMenu(){
-  const m = document.getElementById('mobile-menu');
-  const h = document.getElementById('hamburger');
-  const open = m.classList.toggle('open');
-  document.body.style.overflow = open?'hidden':'';
-  h.querySelectorAll('span')[0].style.transform = open?'rotate(45deg) translate(5px,5px)':'';
-  h.querySelectorAll('span')[1].style.opacity   = open?'0':'1';
-  h.querySelectorAll('span')[2].style.transform = open?'rotate(-45deg) translate(5px,-5px)':'';
-}
 </script>
 </body>
 </html>
