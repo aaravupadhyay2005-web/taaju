@@ -1072,62 +1072,126 @@ footer{
       Min order: Pack of 10. Delivery charges vary by pincode. Most orders delivered next day across Mumbai.
     </div>
   </div>
-  <div class="oform reveal" style="transition-delay:.15s">
-    <div style="display:none" aria-hidden="true"><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"/></div>
+  <form class="oform reveal" style="transition-delay:.15s"
+    name="taaju-order"
+    method="POST"
+    data-netlify="true"
+    data-netlify-honeypot="bot-field"
+    onsubmit="handleSubmit(event)"
+  >
+    <input type="hidden" name="form-name" value="taaju-order"/>
+    <div style="display:none"><input name="bot-field"/></div>
+
     <div class="frow">
       <div class="fgroup">
-        <label class="flabel" for="name">Name</label>
-        <input class="finput" type="text" id="name" placeholder="Your full name" required/>
+        <label class="flabel" for="name">Name *</label>
+        <input class="finput" type="text" id="name" name="name" placeholder="Your full name" required/>
       </div>
       <div class="fgroup">
-        <label class="flabel" for="phone">Phone</label>
-        <input class="finput" type="tel" id="phone" placeholder="+91 XXXXX XXXXX" required/>
+        <label class="flabel" for="phone">Phone *</label>
+        <input class="finput" type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required/>
       </div>
     </div>
+
     <div class="frow">
       <div class="fgroup">
         <label class="flabel" for="email">Email</label>
-        <input class="finput" type="email" id="email" placeholder="you@email.com"/>
+        <input class="finput" type="email" id="email" name="email" placeholder="you@email.com"/>
       </div>
       <div class="fgroup">
-        <label class="flabel" for="pincode">Pincode</label>
-        <input class="finput" type="text" id="pincode" placeholder="Mumbai pincode" required/>
+        <label class="flabel" for="pincode">Pincode *</label>
+        <input class="finput" type="text" id="pincode" name="pincode" placeholder="Mumbai pincode" required/>
       </div>
     </div>
+
     <div class="fgroup">
-      <label class="flabel" for="address">Address</label>
-      <textarea class="ftextarea" id="address" placeholder="Flat, building, area..." rows="2" required></textarea>
+      <label class="flabel" for="address">Delivery Address *</label>
+      <textarea class="ftextarea" id="address" name="address" placeholder="Flat no., building name, street, area..." rows="2" required></textarea>
     </div>
+
     <div class="frow">
       <div class="fgroup">
-        <label class="flabel" for="quantity">Pack</label>
-        <select class="fselect" id="quantity" required>
+        <label class="flabel" for="quantity">Order Type *</label>
+        <select class="fselect" id="quantity" name="order_type" required onchange="toggleBulk(this)">
           <option value="">Select pack</option>
-          <option value="10">Pack of 10 – ₹149</option>
-          <option value="20">Pack of 20 – ₹279</option>
-          <option value="30">Pack of 30 – ₹399</option>
-          <option value="bulk">Bulk Order</option>
+          <option value="Pack of 10 – ₹149">Pack of 10 – ₹149</option>
+          <option value="Pack of 20 – ₹279">Pack of 20 – ₹279</option>
+          <option value="Pack of 30 – ₹399">Pack of 30 – ₹399</option>
+          <option value="bulk">Bulk Order (Custom)</option>
         </select>
       </div>
       <div class="fgroup">
         <label class="flabel" for="ddate">Delivery Date</label>
-        <input class="finput" type="date" id="ddate"/>
+        <input class="finput" type="date" id="ddate" name="delivery_date"/>
       </div>
     </div>
+
+    <!-- BULK ORDER FIELDS — shown only when Bulk is selected -->
+    <div id="bulk-fields" style="display:none;background:rgba(47,93,80,.05);border:1.5px solid rgba(47,93,80,.15);border-radius:var(--r);padding:1.1rem;display:none;flex-direction:column;gap:.9rem">
+      <p style="font-size:.78rem;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:.08em">Bulk Order Details</p>
+      <div class="frow">
+        <div class="fgroup">
+          <label class="flabel" for="bulk-qty">Number of Theplas *</label>
+          <input class="finput" type="number" id="bulk-qty" name="bulk_quantity" placeholder="e.g. 50, 100, 200" min="31"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel" for="bulk-occasion">Occasion</label>
+          <select class="fselect" id="bulk-occasion" name="bulk_occasion">
+            <option value="">Select occasion</option>
+            <option value="Travel / Trip">Travel / Trip</option>
+            <option value="Office / Corporate">Office / Corporate</option>
+            <option value="Family Function">Family Function</option>
+            <option value="Pooja / Religious Event">Pooja / Religious Event</option>
+            <option value="Wedding / Celebration">Wedding / Celebration</option>
+            <option value="Festive Gifting">Festive Gifting</option>
+            <option value="Regular Home Stock">Regular Home Stock</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="bulk-date">Required By Date *</label>
+        <input class="finput" type="date" id="bulk-date" name="bulk_required_by"/>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="bulk-notes">Special Requirements</label>
+        <textarea class="ftextarea" id="bulk-notes" name="bulk_special_requirements" placeholder="Any specific flavour, packaging, or delivery instructions for the bulk order..." rows="2"></textarea>
+      </div>
+      <div style="background:rgba(201,149,74,.1);border:1px solid rgba(201,149,74,.3);border-radius:8px;padding:.75rem 1rem;font-size:.78rem;color:var(--ink2);line-height:1.6">
+        💬 For bulk orders we'll call you back within a few hours to confirm pricing, packaging, and delivery details.
+      </div>
+    </div>
+
     <div class="fgroup">
       <label class="flabel" for="instructions">Special Instructions</label>
-      <textarea class="ftextarea" id="instructions" placeholder="Dietary preferences, delivery notes..." rows="2"></textarea>
+      <textarea class="ftextarea" id="instructions" name="special_instructions" placeholder="Dietary preferences, spice level, delivery notes..." rows="2"></textarea>
     </div>
+
     <div class="fgroup">
-      <label class="flabel">Payment Screenshot</label>
-      <label class="ffile-lbl" for="pscreenshot">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span id="flabeltext">Upload payment screenshot</span>
-      </label>
-      <input class="ffile" type="file" id="pscreenshot" accept="image/*" onchange="updateFLabel(this)"/>
+      <label class="flabel">How did you hear about us?</label>
+      <select class="fselect" name="source">
+        <option value="">Select (optional)</option>
+        <option value="Instagram">Instagram</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Friend / Family">Friend / Family</option>
+        <option value="Google">Google</option>
+        <option value="Other">Other</option>
+      </select>
     </div>
-    <button class="btn-submit" onclick="submitOrder()">Submit Order Request →</button>
-    <p class="fnote">We accept limited daily batches to keep every order fresh.</p>
+
+    <button type="submit" class="btn-submit" id="submit-btn">Submit Order Request →</button>
+    <p class="fnote">We accept limited daily batches to keep every order fresh.<br/>You'll get a WhatsApp confirmation within a few minutes.</p>
+  </form>
+
+  <!-- SUCCESS MESSAGE -->
+  <div id="form-success" style="display:none;background:var(--white);border-radius:var(--r3);padding:3rem 2rem;box-shadow:var(--sh2);text-align:center;flex-direction:column;align-items:center;gap:1rem">
+    <div style="font-size:3rem">🎉</div>
+    <h3 style="font-family:var(--serif);font-size:1.75rem;color:var(--g2);font-weight:400">Order Received!</h3>
+    <p style="font-size:.9rem;color:var(--ink2);line-height:1.7;max-width:320px">We've got your order. Expect a WhatsApp confirmation from us within a few minutes.</p>
+    <a href="https://wa.me/919324841972" target="_blank" class="btn-wa" style="margin-top:.5rem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Chat with us on WhatsApp
+    </a>
   </div>
 </section>
 
@@ -1412,27 +1476,89 @@ function toggleFaq(btn){
   if(!open){btn.setAttribute('aria-expanded','true');ans.classList.add('open')}
 }
 
-// ── FORM ────────────────────────────────────
-function updateFLabel(input){
-  document.getElementById('flabeltext').textContent =
-    input.files?.[0]?.name || 'Upload payment screenshot';
+// ── BULK TOGGLE ─────────────────────────────
+function toggleBulk(sel){
+  const bf = document.getElementById('bulk-fields');
+  const bq = document.getElementById('bulk-qty');
+  const bd = document.getElementById('bulk-date');
+  if(sel.value === 'bulk'){
+    bf.style.display = 'flex';
+    bq.required = true;
+    bd.required = true;
+  } else {
+    bf.style.display = 'none';
+    bq.required = false;
+    bd.required = false;
+  }
 }
-function submitOrder(){
+
+// ── FORM SUBMIT (Netlify Forms) ──────────────
+async function handleSubmit(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn  = document.getElementById('submit-btn');
+
+  // Basic validation
   const name  = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const pin   = document.getElementById('pincode').value.trim();
   const addr  = document.getElementById('address').value.trim();
   const qty   = document.getElementById('quantity').value;
-  if(!name||!phone||!pin||!addr||!qty){showToast('⚠️ Please fill all required fields');return}
-  showToast('✓ Order submitted! Confirming on WhatsApp…');
-  const pack = document.getElementById('quantity').selectedOptions[0].text;
-  const msg  = `Hi TAAJU, I'd like to order!\n\nName: ${name}\nPhone: ${phone}\nPincode: ${pin}\nPack: ${pack}\nAddress: ${addr}`;
-  setTimeout(()=>window.open('https://wa.me/919324841972?text='+encodeURIComponent(msg),'_blank'),900);
+  if(!name||!phone||!pin||!addr||!qty){
+    showToast('⚠️ Please fill all required fields');return;
+  }
+  if(qty==='bulk'){
+    const bq = document.getElementById('bulk-qty').value;
+    if(!bq){showToast('⚠️ Please enter number of theplas for bulk order');return;}
+  }
+
+  // Submit to Netlify
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  try {
+    const data = new FormData(form);
+    const res  = await fetch('/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(data).toString()
+    });
+
+    if(res.ok){
+      // Show success state
+      form.style.display = 'none';
+      document.getElementById('form-success').style.display = 'flex';
+
+      // Also send WhatsApp with order details
+      const pack = document.getElementById('quantity').selectedOptions[0].text;
+      let msg = `Hi TAAJU, I just placed an order!\n\nName: ${name}\nPhone: ${phone}\nPincode: ${pin}\nPack: ${pack}\nAddress: ${addr}`;
+      if(qty==='bulk'){
+        const bqty = document.getElementById('bulk-qty').value;
+        const bocc = document.getElementById('bulk-occasion').value;
+        msg += `\n\nBulk Order: ${bqty} theplas\nOccasion: ${bocc||'Not specified'}`;
+      }
+      setTimeout(()=>window.open('https://wa.me/919324841972?text='+encodeURIComponent(msg),'_blank'),800);
+    } else {
+      throw new Error('Form submission failed');
+    }
+  } catch(err){
+    showToast('⚠️ Something went wrong. Please WhatsApp us directly.');
+    btn.textContent = 'Submit Order Request →';
+    btn.disabled = false;
+  }
+}
+
+// ── DELIVERY DATE ────────────────────────────
+function updateFLabel(input){
+  document.getElementById('flabeltext') &&
+    (document.getElementById('flabeltext').textContent = input.files?.[0]?.name || 'Upload payment screenshot');
 }
 
 // ── DELIVERY DATE ───────────────────────────
-const di = document.getElementById('ddate');
-if(di){const t=new Date();t.setDate(t.getDate()+1);const s=t.toISOString().split('T')[0];di.min=s;di.value=s}
+['ddate','bulk-date'].forEach(id=>{
+  const di=document.getElementById(id);
+  if(di){const t=new Date();t.setDate(t.getDate()+1);const s=t.toISOString().split('T')[0];di.min=s;if(id==='ddate')di.value=s;}
+});
 
 // ── NAV SCROLL ──────────────────────────────
 window.addEventListener('scroll',()=>{
