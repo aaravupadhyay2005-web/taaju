@@ -1184,14 +1184,101 @@ footer{
   </form>
 
   <!-- SUCCESS MESSAGE -->
-  <div id="form-success" style="display:none;background:var(--white);border-radius:var(--r3);padding:3rem 2rem;box-shadow:var(--sh2);text-align:center;flex-direction:column;align-items:center;gap:1rem">
-    <div style="font-size:3rem">🎉</div>
-    <h3 style="font-family:var(--serif);font-size:1.75rem;color:var(--g2);font-weight:400">Order Received!</h3>
-    <p style="font-size:.9rem;color:var(--ink2);line-height:1.7;max-width:320px">We've got your order. Expect a WhatsApp confirmation from us within a few minutes.</p>
-    <a href="https://wa.me/919324841972" target="_blank" class="btn-wa" style="margin-top:.5rem">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-      Chat with us on WhatsApp
-    </a>
+  <!-- PAYMENT PAGE -->
+  <div id="form-success" style="display:none;flex-direction:column;gap:0;width:100%">
+
+    <!-- Step indicator -->
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:2rem">
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">✓</div>
+        <span style="font-size:.8rem;font-weight:600;color:var(--g)">Order Details</span>
+      </div>
+      <div style="flex:1;height:2px;background:var(--g);margin:0 .75rem"></div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">2</div>
+        <span style="font-size:.8rem;font-weight:600;color:var(--g)">Payment</span>
+      </div>
+      <div style="flex:1;height:2px;background:var(--cream3);margin:0 .75rem"></div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--cream3);color:var(--ink2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">3</div>
+        <span style="font-size:.8rem;font-weight:500;color:var(--ink2)">Confirm</span>
+      </div>
+    </div>
+
+    <!-- Order summary card -->
+    <div style="background:rgba(47,93,80,.05);border:1.5px solid rgba(47,93,80,.15);border-radius:var(--r2);padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+        <span style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--g)">Your Order</span>
+        <span style="font-size:.72rem;color:var(--ink3)" id="order-id-display"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.95rem;font-weight:500;color:var(--ink)" id="payment-pack-display">—</span>
+        <span style="font-family:var(--serif);font-size:1.5rem;color:var(--g);font-weight:400" id="payment-amount-display">—</span>
+      </div>
+      <div style="font-size:.78rem;color:var(--ink2);margin-top:.35rem" id="payment-name-display"></div>
+    </div>
+
+    <!-- UPI Payment card -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r2);padding:1.75rem;margin-bottom:1.25rem;text-align:center">
+      <p style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--ink2);margin-bottom:1.25rem">Pay via UPI</p>
+
+      <!-- UPI QR Code (generated via QR API) -->
+      <div style="width:180px;height:180px;margin:0 auto 1.25rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);padding:8px;background:#fff">
+        <img id="upi-qr" src="" alt="UPI QR Code" style="width:100%;height:100%;object-fit:contain"/>
+      </div>
+
+      <div style="font-size:.82rem;color:var(--ink2);margin-bottom:1rem">Scan with any UPI app</div>
+
+      <!-- App icons row -->
+      <div style="display:flex;justify-content:center;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <a id="gpay-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" style="width:32px;height:32px;object-fit:contain" alt="GPay"/>
+          </div>
+          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">GPay</span>
+        </a>
+        <a id="phonepe-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:48px;height:48px;border-radius:12px;background:#5f259f;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" style="width:32px;height:32px;object-fit:contain" alt="PhonePe"/>
+          </div>
+          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">PhonePe</span>
+        </a>
+        <a id="paytm-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:48px;height:48px;border-radius:12px;background:#00baf2;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Paytm_logo.png/512px-Paytm_logo.png" style="width:32px;height:32px;object-fit:contain" alt="Paytm"/>
+          </div>
+          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">Paytm</span>
+        </a>
+        <a id="bhim-link" href="#" target="_blank" style="display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none">
+          <div style="width:48px;height:48px;border-radius:12px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:var(--sh)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/BHIM_logo.png/512px-BHIM_logo.png" style="width:32px;height:32px;object-fit:contain" alt="BHIM"/>
+          </div>
+          <span style="font-size:.65rem;color:var(--ink2);font-weight:500">BHIM</span>
+        </a>
+      </div>
+
+      <!-- UPI ID copy -->
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem">
+        <div>
+          <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600;margin-bottom:.15rem">UPI ID</div>
+          <div style="font-size:.95rem;font-weight:600;color:var(--ink);font-family:monospace">9324841972@upi</div>
+        </div>
+        <button onclick="copyUPI()" style="background:var(--g);color:#fff;border:none;border-radius:100px;padding:.4rem .9rem;font-size:.75rem;font-weight:600;cursor:pointer;font-family:var(--sans);white-space:nowrap" id="copy-upi-btn">Copy</button>
+      </div>
+
+      <p style="font-size:.75rem;color:var(--ink3);line-height:1.6">Pay the exact amount shown above. Screenshot not required — just send us your UTR/transaction ID on WhatsApp.</p>
+    </div>
+
+    <!-- After payment CTA -->
+    <div style="background:var(--g2);border-radius:var(--r2);padding:1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.85rem">
+      <p style="color:rgba(255,255,255,.9);font-size:.9rem;line-height:1.6;font-weight:300">After paying, send your <strong style="color:#fff">transaction ID / UTR number</strong> on WhatsApp to confirm your order.</p>
+      <a id="wa-confirm-link" href="#" target="_blank" style="background:#25D366;color:#fff;padding:.85rem 1.75rem;border-radius:100px;font-size:.9rem;font-weight:600;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;transition:background .2s">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Send Payment Confirmation
+      </a>
+      <p style="color:rgba(255,255,255,.4);font-size:.72rem">Your order is reserved for 30 minutes pending payment.</p>
+    </div>
+
   </div>
 </section>
 
@@ -1476,6 +1563,16 @@ function toggleFaq(btn){
   if(!open){btn.setAttribute('aria-expanded','true');ans.classList.add('open')}
 }
 
+// ── COPY UPI ────────────────────────────────
+function copyUPI(){
+  navigator.clipboard.writeText('9324841972@upi').then(()=>{
+    const btn = document.getElementById('copy-upi-btn');
+    btn.textContent = 'Copied!';
+    btn.style.background = 'var(--g2)';
+    setTimeout(()=>{btn.textContent='Copy';btn.style.background=''},2000);
+  });
+}
+
 // ── BULK TOGGLE ─────────────────────────────
 function toggleBulk(sel){
   const bf = document.getElementById('bulk-fields');
@@ -1560,15 +1657,41 @@ async function handleSubmit(e){
     });
 
     if(res.ok){
+      // Price map
+      const priceMap = {'Pack of 10 – ₹149':149,'Pack of 20 – ₹279':279,'Pack of 30 – ₹399':399};
+      const amount = qty==='bulk' ? null : priceMap[pack];
+      const orderId = 'TJ-'+Date.now().toString().slice(-6);
+      const upiId   = '9324841972@upi';
+
+      // Build UPI deep link
+      const upiNote = `TAAJU Order ${orderId}`;
+      const upiBase = `upi://pay?pa=${upiId}&pn=TAAJU&tn=${encodeURIComponent(upiNote)}${amount?'&am='+amount:''}`;
+
+      // Set QR code (using Google Charts QR API via wikimedia proxy)
+      const qrData = encodeURIComponent(upiBase);
+      document.getElementById('upi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiBase)}`;
+
+      // Set UPI app deep links
+      document.getElementById('gpay-link').href    = upiBase;
+      document.getElementById('phonepe-link').href = upiBase;
+      document.getElementById('paytm-link').href   = upiBase;
+      document.getElementById('bhim-link').href    = upiBase;
+
+      // Populate order summary
+      document.getElementById('payment-pack-display').textContent   = pack;
+      document.getElementById('payment-amount-display').textContent = amount ? '₹'+amount : 'Custom';
+      document.getElementById('payment-name-display').textContent   = `For ${name} · ${phone}`;
+      document.getElementById('order-id-display').textContent       = orderId;
+
+      // WhatsApp confirmation link
+      let waMsg = `Hi TAAJU! I've paid for my order 💚\n\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}\nPack: ${pack}${amount?'\nAmount: ₹'+amount:''}\n\nTransaction ID / UTR: [paste here]`;
+      document.getElementById('wa-confirm-link').href = 'https://wa.me/919324841972?text='+encodeURIComponent(waMsg);
+
+      // Show payment page
       form.style.display = 'none';
       document.getElementById('form-success').style.display = 'flex';
+      document.getElementById('form-success').scrollIntoView({behavior:'smooth',block:'start'});
 
-      // Also ping WhatsApp
-      let msg = `Hi TAAJU, I just placed an order!\n\nName: ${name}\nPhone: ${phone}\nPincode: ${pin}\nPack: ${pack}\nAddress: ${addr}`;
-      if(qty==='bulk'){
-        msg += `\n\nBulk: ${document.getElementById('bulk-qty').value} theplas\nOccasion: ${document.getElementById('bulk-occasion').value||'Not specified'}`;
-      }
-      setTimeout(()=>window.open('https://wa.me/919324841972?text='+encodeURIComponent(msg),'_blank'),800);
     } else {
       throw new Error('Submission failed');
     }
