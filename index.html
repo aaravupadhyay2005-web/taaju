@@ -330,16 +330,16 @@ button{font-family:var(--sans);cursor:pointer;border:none;background:none}
 .qbtn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--g);transition:background .15s;cursor:pointer}
 .qbtn:hover{background:var(--cream3)}
 .qval{min-width:32px;text-align:center;font-weight:600;font-size:.85rem;color:var(--ink)}
-.btn-cart{
+.btn-add-cart{
   background:var(--g);color:var(--white);
   width:100%;padding:.75rem;border-radius:100px;
   font-size:.82rem;font-weight:500;letter-spacing:.01em;
-  margin-top:auto;cursor:pointer;
+  margin-top:auto;cursor:pointer;border:none;font-family:var(--sans);
   transition:background .2s,transform .15s;
   display:flex;align-items:center;justify-content:center;gap:.4rem;
 }
-.btn-cart:hover{background:var(--g2);transform:scale(1.01)}
-.btn-cart.added{background:var(--g2)}
+.btn-add-cart:hover{background:var(--g2);transform:scale(1.01)}
+.btn-add-cart.added{background:var(--g2)}
 
 /* ══════════════════════════════════════
    WHY
@@ -907,7 +907,7 @@ footer{
           <span class="qval">1</span>
           <button class="qbtn" onclick="changeQty(this,1)">+</button>
         </div>
-        <button class="btn-cart" onclick="addToCart('Pack of 10',149,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack10.png')">
+        <button class="btn-add-cart" onclick="addToCart('Pack of 10',149,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack10.png')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           Add to Cart
         </button>
@@ -932,7 +932,7 @@ footer{
           <span class="qval">1</span>
           <button class="qbtn" onclick="changeQty(this,1)">+</button>
         </div>
-        <button class="btn-cart" onclick="addToCart('Pack of 20',279,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack20.png')">
+        <button class="btn-add-cart" onclick="addToCart('Pack of 20',279,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack20.png')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           Add to Cart
         </button>
@@ -957,7 +957,7 @@ footer{
           <span class="qval">1</span>
           <button class="qbtn" onclick="changeQty(this,1)">+</button>
         </div>
-        <button class="btn-cart" onclick="addToCart('Pack of 30',399,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack30.png')">
+        <button class="btn-add-cart" onclick="addToCart('Pack of 30',399,this,'https://raw.githubusercontent.com/aaravupadhyay2005-web/taaju/main/images/pack30.png')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           Add to Cart
         </button>
@@ -1424,7 +1424,7 @@ footer{
 
 <!-- MOBILE BAR -->
 <div class="mobile-bar" id="mobile-bar">
-  <button class="btn-cart" onclick="openCart()" style="flex:0 0 auto;width:48px;padding:0;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--cream2);color:var(--g)">
+  <button onclick="openCart()" style="flex:0 0 auto;width:48px;padding:0;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--cream2);color:var(--g);border:none;cursor:pointer;position:relative">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
   </button>
   <a href="#order" class="btn-green" style="flex:1;justify-content:center;padding:.8rem">Order Now</a>
@@ -1438,101 +1438,99 @@ footer{
 // ── CART STATE ──────────────────────────────
 let cart = [];
 
-function getTotal(){return cart.reduce((s,i)=>s+i.price*i.qty,0)}
-function getCount(){return cart.reduce((s,i)=>s+i.qty,0)}
+function getTotal(){ return cart.reduce((s,i) => s + i.price * i.qty, 0); }
+function getCount(){ return cart.reduce((s,i) => s + i.qty, 0); }
 
-function updateCartUI(){
+function renderCart(){
+  const itemsEl = document.getElementById('cart-items');
+  const footEl  = document.getElementById('cart-foot');
+  const totalEl = document.getElementById('cart-total');
+  const cc      = document.getElementById('cart-count');
+
+  // Badge
   const count = getCount();
-  const cc = document.getElementById('cart-count');
   cc.textContent = count;
   count > 0 ? cc.classList.add('show') : cc.classList.remove('show');
 
-  const itemsEl = document.getElementById('cart-items');
-  const emptyEl = document.getElementById('cart-empty');
-  const footEl  = document.getElementById('cart-foot');
-  const totalEl = document.getElementById('cart-total');
-
   if(cart.length === 0){
-    emptyEl.style.display = 'flex'; footEl.style.display = 'none';
-    itemsEl.innerHTML = '';
-    itemsEl.appendChild(emptyEl);
+    itemsEl.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <p>Your cart is empty.<br>Add some fresh theplas!</p>
+      </div>`;
+    footEl.style.display = 'none';
     return;
   }
 
-  emptyEl.style.display = 'none';
   footEl.style.display = 'flex';
-  totalEl.textContent = '₹'+getTotal().toLocaleString('en-IN');
+  totalEl.textContent = '₹' + getTotal().toLocaleString('en-IN');
 
-  itemsEl.innerHTML = '';
-  cart.forEach((item,idx) => {
-    const el = document.createElement('div');
-    el.className = 'citem';
-    el.innerHTML = `
-      <div class="citem-img"><img src="${item.img}" alt="${item.name}" style="object-fit:cover"/></div>
+  itemsEl.innerHTML = cart.map((item,idx) => `
+    <div class="citem">
+      <div class="citem-img"><img src="${item.img}" alt="${item.name}"/></div>
       <div class="citem-info">
         <div class="citem-name">${item.name}</div>
-        <div class="citem-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
+        <div class="citem-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
         <div class="citem-qty">
           <button class="cqbtn" onclick="cartQty(${idx},-1)">−</button>
           <span class="cqval">${item.qty}</span>
           <button class="cqbtn" onclick="cartQty(${idx},1)">+</button>
         </div>
       </div>
-      <button class="citem-del" onclick="removeItem(${idx})" title="Remove">✕</button>
-    `;
-    itemsEl.appendChild(el);
-  });
+      <button class="citem-del" onclick="removeItem(${idx})">✕</button>
+    </div>`).join('');
 }
 
-function cartQty(idx,delta){
+function cartQty(idx, delta){
   cart[idx].qty = Math.max(1, cart[idx].qty + delta);
-  updateCartUI();
+  renderCart();
 }
 function removeItem(idx){
-  cart.splice(idx,1);
-  updateCartUI();
-  if(cart.length===0) closeCart();
+  cart.splice(idx, 1);
+  renderCart();
+  if(cart.length === 0) closeCart();
 }
 
-// ── ADD TO CART ─────────────────────────────
-function changeQty(btn,delta){
+// ── QTY CONTROLS ON PRODUCT CARDS ───────────
+function changeQty(btn, delta){
   const row = btn.closest('.qty-row');
-  const v = row.querySelector('.qval');
-  let n = parseInt(v.textContent)+delta;
-  if(n<1) n=1;
+  const v   = row.querySelector('.qval');
+  let n = parseInt(v.textContent) + delta;
+  if(n < 1) n = 1;
   v.textContent = n;
 }
 
-function addToCart(name,price,btn,img){
+// ── ADD TO CART ──────────────────────────────
+function addToCart(name, price, btn, img){
   const body = btn.closest('.pcard-body');
   const qty  = parseInt(body.querySelector('.qval').textContent);
-  const existing = cart.find(i=>i.name===name);
+  const existing = cart.find(i => i.name === name);
   if(existing) existing.qty += qty;
-  else cart.push({name,price,qty,img});
-  updateCartUI();
+  else cart.push({name, price, qty, img});
 
+  // Button feedback
   const orig = btn.innerHTML;
   btn.innerHTML = '✓ Added!';
   btn.classList.add('added');
-  setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('added')},1500);
+  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('added'); }, 1500);
 
-  showToast('🛒 '+qty+'× '+name+' added');
+  showToast('🛒 ' + qty + '× ' + name + ' added');
   openCart();
 }
 
-// ── CART OPEN/CLOSE ─────────────────────────
+// ── CART OPEN / CLOSE ────────────────────────
 function openCart(){
-  updateCartUI();
+  renderCart();
   document.getElementById('cart-overlay').classList.add('open');
   document.getElementById('cart-drawer').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
 function closeCart(){
   document.getElementById('cart-overlay').classList.remove('open');
   document.getElementById('cart-drawer').classList.remove('open');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape') closeCart()});
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeCart(); });
 
 // ── CHECKOUT ────────────────────────────────
 function checkoutWhatsApp(){
