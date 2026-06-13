@@ -1517,29 +1517,60 @@ async function handleSubmit(e){
   btn.disabled = true;
 
   try {
-    const data = new FormData(form);
-    const res  = await fetch('/', {
+    const pack = document.getElementById('quantity').selectedOptions[0].text;
+    const ddate = document.getElementById('ddate').value;
+    const instructions = document.getElementById('instructions').value;
+    const source = form.querySelector('[name="source"]').value;
+
+    let bulkInfo = '';
+    if(qty === 'bulk'){
+      const bqty = document.getElementById('bulk-qty').value;
+      const bocc = document.getElementById('bulk-occasion').value;
+      const bdate = document.getElementById('bulk-date').value;
+      const bnotes = document.getElementById('bulk-notes').value;
+      bulkInfo = `\n\n🧾 BULK ORDER DETAILS\nQuantity: ${bqty} theplas\nOccasion: ${bocc||'Not specified'}\nRequired By: ${bdate||'Not specified'}\nSpecial Requirements: ${bnotes||'None'}`;
+    }
+
+    // Build email body
+    const emailBody = `New TAAJU Order Request\n\n👤 CUSTOMER DETAILS\nName: ${name}\nPhone: ${phone}\nEmail: ${document.getElementById('email').value||'Not provided'}\nPincode: ${pin}\nAddress: ${addr}\n\n📦 ORDER DETAILS\nPack: ${pack}\nDelivery Date: ${ddate||'Not specified'}\nSpecial Instructions: ${instructions||'None'}\nSource: ${source||'Not specified'}${bulkInfo}`;
+
+    // Submit to Web3Forms
+    const payload = {
+      access_key: '4ac34449-48a6-47cb-8079-f6675e34c580',
+      subject: `🛒 New TAAJU Order — ${name} — ${pack}`,
+      from_name: 'TAAJU Website',
+      name, phone,
+      email: document.getElementById('email').value || 'Not provided',
+      pincode: pin,
+      address: addr,
+      order_type: pack,
+      delivery_date: ddate || 'Not specified',
+      special_instructions: instructions || 'None',
+      source: source || 'Not specified',
+      bulk_quantity: qty==='bulk' ? document.getElementById('bulk-qty').value : 'N/A',
+      bulk_occasion: qty==='bulk' ? document.getElementById('bulk-occasion').value : 'N/A',
+      bulk_required_by: qty==='bulk' ? document.getElementById('bulk-date').value : 'N/A',
+      bulk_notes: qty==='bulk' ? document.getElementById('bulk-notes').value : 'N/A',
+    };
+
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: new URLSearchParams(data).toString()
+      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      body: JSON.stringify(payload)
     });
 
     if(res.ok){
-      // Show success state
       form.style.display = 'none';
       document.getElementById('form-success').style.display = 'flex';
 
-      // Also send WhatsApp with order details
-      const pack = document.getElementById('quantity').selectedOptions[0].text;
+      // Also ping WhatsApp
       let msg = `Hi TAAJU, I just placed an order!\n\nName: ${name}\nPhone: ${phone}\nPincode: ${pin}\nPack: ${pack}\nAddress: ${addr}`;
       if(qty==='bulk'){
-        const bqty = document.getElementById('bulk-qty').value;
-        const bocc = document.getElementById('bulk-occasion').value;
-        msg += `\n\nBulk Order: ${bqty} theplas\nOccasion: ${bocc||'Not specified'}`;
+        msg += `\n\nBulk: ${document.getElementById('bulk-qty').value} theplas\nOccasion: ${document.getElementById('bulk-occasion').value||'Not specified'}`;
       }
       setTimeout(()=>window.open('https://wa.me/919324841972?text='+encodeURIComponent(msg),'_blank'),800);
     } else {
-      throw new Error('Form submission failed');
+      throw new Error('Submission failed');
     }
   } catch(err){
     showToast('⚠️ Something went wrong. Please WhatsApp us directly.');
